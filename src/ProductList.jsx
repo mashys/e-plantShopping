@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice';
 import './ProductList.css';
 import CartItem from './CartItem';
 
 function ProductList({ onHomeClick }) {
     const dispatch = useDispatch();
+    const cart = useSelector(state => state.cart.items);
 
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false);
@@ -270,6 +271,9 @@ function ProductList({ onHomeClick }) {
         }));
     };
 
+    // Calculate total number of items in the cart
+    const totalCartItems = cart.reduce((total, item) => total + item.quantity, 0);
+
     return (
         <div>
             <div className="navbar" style={styleObj}>
@@ -295,6 +299,7 @@ function ProductList({ onHomeClick }) {
                                     <circle cx="184" cy="216" r="12"></circle>
                                     <path d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8" fill="none" stroke="#faf9f9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" id="mainIconPathAttribute"></path>
                                 </svg>
+                                <span style={{ color: 'white', fontSize: '18px', marginLeft: '5px' }}>{totalCartItems}</span>
                             </h1>
                         </a>
                     </div>
@@ -322,8 +327,13 @@ function ProductList({ onHomeClick }) {
                                         <button
                                             className="product-button"
                                             onClick={() => handleAddToCart(plant)}
+                                            disabled={addedToCart[plant.name]}
+                                            style={{
+                                                backgroundColor: addedToCart[plant.name] ? 'gray' : '',
+                                                cursor: addedToCart[plant.name] ? 'not-allowed' : 'pointer',
+                                            }}
                                         >
-                                            Add to Cart
+                                            {addedToCart[plant.name] ? 'Added to Cart' : 'Add to Cart'}
                                         </button>
                                     </div>
                                 ))}
